@@ -4,24 +4,27 @@ import datetime
 import matplotlib.pyplot as plt
 import numpy as np
 
-ticker = "MSFT"
-# filename_ending = "_data.csv"
-# filepath = "stock_data/" + ticker + filename_ending
 
-filepath = (
-    "/Users/leiye/Downloads/Jensens/4 Python forts/inlamning/stock_data/MSFT_data.csv"
-)
-df = pd.read_csv(filepath)  # read the csv and put into df
-df = df[["date", "close"]]  # only need date and close for this model
+# filepath = (
+#     "/Users/leiye/Downloads/Jensens/4 Python forts/inlamning/stock_data/MSFT_data.csv"
+# )
+# df = pd.read_csv(filepath)  # read the csv and put into df
+# df = df[["date", "close"]]  # only need date and close for this model
 
 
 def str_to_datetime(s):
     """
     restructuring the data "date" into a datetime type
     """
-    split = s.split("-")  # Splits depending on the - symbol
-    year, month, day = int(split[0]), int(split[1]), int(split[2])
-    return datetime.datetime(year=year, month=month, day=day)
+    # If s is already a datetime, return it
+    if isinstance(s, pd.Timestamp):
+        return s
+    if isinstance(s, str):
+        split = s.split("-")  # Splits depending on the - symbol
+        year, month, day = int(split[0]), int(split[1]), int(split[2])
+        return datetime.datetime(year=year, month=month, day=day)
+
+    raise ValueError(f"Unexpected date format: {s}")
 
 
 def lstm_datatransformer(df):
@@ -30,7 +33,7 @@ def lstm_datatransformer(df):
     """
 
 
-def df_to_windowed_df(dataframe, first_date_str, last_date_str, n=3):
+def df_to_windowed_df(df, first_date_str, last_date_str, n=3):
     df["date"] = df["date"].apply(
         str_to_datetime
     )  # apply the function to the whole date column
@@ -46,7 +49,7 @@ def df_to_windowed_df(dataframe, first_date_str, last_date_str, n=3):
     last_time = False
 
     while True:
-        df_subset = dataframe.loc[:target_date].tail(n + 1)
+        df_subset = df.loc[:target_date].tail(n + 1)
 
         if len(df_subset) != n + 1:
             print(f"Error: Window of size {n} is too large for date {target_date}")
@@ -59,9 +62,7 @@ def df_to_windowed_df(dataframe, first_date_str, last_date_str, n=3):
         X.append(x)
         Y.append(y)
 
-        next_week = dataframe.loc[
-            target_date : target_date + datetime.timedelta(days=7)
-        ]
+        next_week = df.loc[target_date : target_date + datetime.timedelta(days=7)]
         next_datetime_str = str(next_week.head(2).tail(1).index.values[0])
         next_date_str = next_datetime_str.split("T")[0]
         year_month_day = next_date_str.split("-")
@@ -89,14 +90,17 @@ def df_to_windowed_df(dataframe, first_date_str, last_date_str, n=3):
     return ret_df
 
 
-START_DATE = "2024-01-02"
-END_DATE = "2025-01-02"
+# START_DATE = "2024-01-02"
+# END_DATE = "2025-01-02"
 
-windowed_df = df_to_windowed_df(df, START_DATE, END_DATE, n=3)
+# windowed_df = df_to_windowed_df(df, START_DATE, END_DATE, n=3)
 
 
-# change windowed dataframe to 3 variables: Date / X / y
 def windowed_df_to_date_X_y(windowed_df):
+    """
+    change windowed pd.dataframe to 3 numpy variables: Date / X / y in format Tuple[np.ndarray, np.ndarray, np.ndarray]
+    """
+
     # Change whole dataframe to numpy dataframe
     df_np = windowed_df.to_numpy()
 
@@ -119,7 +123,7 @@ def windowed_df_to_date_X_y(windowed_df):
     )  # Need float type for the arrays
 
 
-dates, X, y = windowed_df_to_date_X_y(windowed_df)
+# dates, X, y = windowed_df_to_date_X_y(windowed_df)
 
 
 def split_data_train_val_test(dates, X, y):
@@ -152,12 +156,13 @@ def split_data_train_val_test(dates, X, y):
     )
 
 
-dates_train, X_train, y_train, dates_val, X_val, y_val, dates_test, X_test, y_test = (
-    split_data_train_val_test(dates, X, y)
-)
+# dates_train, X_train, y_train, dates_val, X_val, y_val, dates_test, X_test, y_test = (
+#     split_data_train_val_test(dates, X, y)
+# )
 
 
-def train_lstm_model(X_train, y_train, X_val, y_val, epoch=100):
+def lstm_model(X_train, y_train, X_val, y_val):
+
     from tensorflow.keras.models import Sequential
     from tensorflow.keras.optimizers import Adam
     from tensorflow.keras import layers
@@ -182,18 +187,18 @@ def train_lstm_model(X_train, y_train, X_val, y_val, epoch=100):
         metrics=["mean_absolute_error"],
     )
 
-    model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=100)
     return model
 
 
 # Creating a model instance
-model = train_lstm_model(X_train, y_train, X_val, y_val)
+# model = train_lstm_model(X_train, y_train, X_val, y_val)
+# model = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=100)
 
 
 # %%
 
 # Display the model's architecture
-model.summary()
+# model.summary()
 
 # %%
 

@@ -2,7 +2,7 @@ import pandas as pd
 import os
 from dotenv import load_dotenv
 import requests
-from data_handler import append_data_to_csv
+from app.data.data_handler import append_data_to_csv
 
 
 load_dotenv()
@@ -51,7 +51,7 @@ def get_data_alpha_vantage(ticker):
     # Reorder columns to make "date" the first column
     df_new = df_new[["date", "open", "high", "low", "close", "volume"]]
 
-    append_data_to_csv(ticker, df_new)
+    # append_data_to_csv(ticker, df_new)
     return df_new
 
     # # Save the DataFrame to a CSV file and copy to google drive
