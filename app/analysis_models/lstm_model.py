@@ -5,13 +5,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-# filepath = (
-#     "/Users/leiye/Downloads/Jensens/4 Python forts/inlamning/stock_data/MSFT_data.csv"
-# )
-# df = pd.read_csv(filepath)  # read the csv and put into df
-# df = df[["date", "close"]]  # only need date and close for this model
-
-
 def str_to_datetime(s):
     """
     restructuring the data "date" into a datetime type
@@ -90,12 +83,6 @@ def df_to_windowed_df(df, first_date_str, last_date_str, n=3):
     return ret_df
 
 
-# START_DATE = "2024-01-02"
-# END_DATE = "2025-01-02"
-
-# windowed_df = df_to_windowed_df(df, START_DATE, END_DATE, n=3)
-
-
 def windowed_df_to_date_X_y(windowed_df):
     """
     change windowed pd.dataframe to 3 numpy variables: Date / X / y in format Tuple[np.ndarray, np.ndarray, np.ndarray]
@@ -121,9 +108,6 @@ def windowed_df_to_date_X_y(windowed_df):
         X.astype(np.float32),
         y.astype(np.float32),
     )  # Need float type for the arrays
-
-
-# dates, X, y = windowed_df_to_date_X_y(windowed_df)
 
 
 def split_data_train_val_test(dates, X, y):
@@ -156,11 +140,6 @@ def split_data_train_val_test(dates, X, y):
     )
 
 
-# dates_train, X_train, y_train, dates_val, X_val, y_val, dates_test, X_test, y_test = (
-#     split_data_train_val_test(dates, X, y)
-# )
-
-
 def lstm_model(X_train, y_train, X_val, y_val):
 
     from tensorflow.keras.models import Sequential
@@ -190,18 +169,11 @@ def lstm_model(X_train, y_train, X_val, y_val):
     return model
 
 
-# Creating a model instance
-# model = train_lstm_model(X_train, y_train, X_val, y_val)
-# model = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=100)
-
-
-# %%
-
 # Display the model's architecture
 # model.summary()
 
 # %%
 
-# improvments
+# TODO  for improvements
 # Make it work on GPU
 # Save models with specific names and load models

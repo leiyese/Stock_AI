@@ -52,9 +52,7 @@ itsdangerous==2.2.0
 jinja2==3.1.5
     # via flask
 keras==3.8.0
-    # via
-    #   -r requirements.in
-    #   tensorflow
+    # via tensorflow
 kiwisolver==1.4.8
     # via matplotlib
 libclang==18.1.1
@@ -68,7 +66,9 @@ markupsafe==3.0.2
     #   jinja2
     #   werkzeug
 matplotlib==3.10.0
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   seaborn
 mdurl==0.1.2
     # via markdown-it-py
 ml-dtypes==0.4.1
@@ -86,6 +86,7 @@ numpy==2.0.2
     #   matplotlib
     #   ml-dtypes
     #   pandas
+    #   seaborn
     #   tensorboard
     #   tensorflow
 opt-einsum==3.4.0
@@ -99,7 +100,9 @@ packaging==24.2
     #   tensorboard
     #   tensorflow
 pandas==2.2.3
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   seaborn
 pillow==11.1.0
     # via matplotlib
 protobuf==5.29.3
@@ -124,6 +127,8 @@ requests==2.32.3
     #   tensorflow
 rich==13.9.4
     # via keras
+seaborn==0.13.2
+    # via -r requirements.in
 six==1.17.0
     # via
     #   astunparse
