@@ -119,10 +119,12 @@ def append_data_to_csv(ticker, new_df):
 def read_csv_data(filepath, ticker):
 
     try:
-        df = pd.read_csv(filepath)  # Automatically convert 'date'
+        df = pd.read_csv(filepath)
     except FileNotFoundError:
         # If the file does not exist
-        df = pd.DataFrame()
+
+        df = pd.DataFrame(columns=["date", "open", "high", "low", "close", "volume"])
+    # Automatically convert 'date'
     df["date"] = pd.to_datetime(df["date"], errors="coerce")
 
     return df

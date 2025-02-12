@@ -1,8 +1,16 @@
-# %%
 import pandas as pd
 import datetime
-import matplotlib.pyplot as plt
 import numpy as np
+
+# Plot imports
+import matplotlib
+
+matplotlib.use("Agg")  # Use non-interactive backend before importing pyplot
+import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
+import seaborn as sns
+import io
+import base64
 
 
 def str_to_datetime(s):
@@ -140,7 +148,7 @@ def split_data_train_val_test(dates, X, y):
     )
 
 
-def lstm_model(X_train, y_train, X_val, y_val):
+def lstm_model():
 
     from tensorflow.keras.models import Sequential
     from tensorflow.keras.optimizers import Adam
@@ -172,8 +180,133 @@ def lstm_model(X_train, y_train, X_val, y_val):
 # Display the model's architecture
 # model.summary()
 
-# %%
 
 # TODO  for improvements
 # Make it work on GPU
 # Save models with specific names and load models
+
+
+def plot_lstm_whole(
+    model,
+    dates_train,
+    X_train,
+    y_train,
+    dates_val,
+    X_val,
+    y_val,
+    dates_test,
+    X_test,
+    y_test,
+):
+    """
+    Generates a combined LSTM prediction plot for train, validation, and test data.
+    Returns a Base64 string for rendering in HTML.
+    """
+    train_predictions = model.predict(X_train).flatten()
+    val_predictions = model.predict(X_val).flatten()
+    test_predictions = model.predict(X_test).flatten()
+
+    # Create figure
+    fig, ax = plt.subplots(figsize=(10, 5))
+
+    # Plot predictions and actual values
+    sns.lineplot(
+        x=dates_train,
+        y=train_predictions,
+        label="Train Predictions",
+        linestyle="dashed",
+        ax=ax,
+    )
+    sns.lineplot(x=dates_train, y=y_train, label="Train Observations", ax=ax)
+    sns.lineplot(
+        x=dates_val,
+        y=val_predictions,
+        label="Validation Predictions",
+        linestyle="dashed",
+        ax=ax,
+    )
+    sns.lineplot(x=dates_val, y=y_val, label="Validation Observations", ax=ax)
+    sns.lineplot(
+        x=dates_test,
+        y=test_predictions,
+        label="Test Predictions",
+        linestyle="dashed",
+        ax=ax,
+    )
+    sns.lineplot(x=dates_test, y=y_test, label="Test Observations", ax=ax)
+
+    # Title and labels
+    ax.set_title(
+        "LSTM Model Predictions for Train, Validation & Test",
+        fontsize=14,
+        fontweight="bold",
+    )
+    ax.set_xlabel("Date")
+    ax.set_ylabel("Stock Price")
+    ax.legend()
+
+    # Save figure to memory
+    img = io.BytesIO()
+    plt.savefig(img, format="png", bbox_inches="tight")
+    img.seek(0)
+
+    # Convert to Base64
+    img_base64 = base64.b64encode(img.getvalue()).decode()
+
+    # Cleanup
+    plt.close(fig)
+    plt.clf()
+
+    return img_base64
+
+
+def plot_lstm(model, dates, X, y, data_type="test"):
+    """
+    Plots LSTM predictions vs actual values.
+
+    Parameters:
+    - model: Trained LSTM model
+    - dates: Dates corresponding to data points
+    - X: Feature set (input data)
+    - y: Ground truth (actual values)
+    - data_type: String ("train", "val", or "test") to customize the legend
+
+    Returns:
+    - Base64-encoded PNG image
+    """
+    # Create figure
+    fig, ax = plt.subplots(figsize=(10, 5))
+
+    # Make predictions
+    predictions = model.predict(X).flatten()
+
+    # Define legend names dynamically
+    legend_pred = f"{data_type.capitalize()} Predictions"
+    legend_obs = f"{data_type.capitalize()} Observations"
+
+    sns.lineplot(x=dates, y=predictions, label=legend_pred, linestyle="dashed", ax=ax)
+    sns.lineplot(x=dates, y=y, label=legend_obs, marker="o", ax=ax)
+
+    # Title and labels
+    ax.set_title(
+        f"LSTM Predictions vs Actual ({data_type.capitalize()} Data)",
+        fontsize=14,
+        fontweight="bold",
+    )
+    ax.set_xlabel("Date")
+    ax.set_ylabel("Stock Price")
+    ax.legend()
+
+    # Save figure to memory
+    img = io.BytesIO()
+    plt.savefig(img, format="png", bbox_inches="tight")
+    img.seek(0)
+
+    # Convert to Base64
+    img_base64 = base64.b64encode(img.getvalue()).decode()
+
+    # Cleanup
+    plt.close(fig)
+    plt.clf()
+
+    return img_base64
