@@ -47,6 +47,8 @@ h5py==3.12.1
     #   tensorflow
 idna==3.10
     # via requests
+iniconfig==2.0.0
+    # via pytest
 itsdangerous==2.2.0
     # via flask
 jinja2==3.1.5
@@ -97,6 +99,7 @@ packaging==24.2
     # via
     #   keras
     #   matplotlib
+    #   pytest
     #   tensorboard
     #   tensorflow
 pandas==2.2.3
@@ -105,6 +108,8 @@ pandas==2.2.3
     #   seaborn
 pillow==11.1.0
     # via matplotlib
+pluggy==1.5.0
+    # via pytest
 protobuf==5.29.3
     # via
     #   tensorboard
@@ -113,6 +118,8 @@ pygments==2.19.1
     # via rich
 pyparsing==3.2.1
     # via matplotlib
+pytest==8.3.4
+    # via -r requirements.in
 python-dateutil==2.9.0.post0
     # via
     #   matplotlib

@@ -50,15 +50,18 @@ python3 run.py
 
 ## 📄 Usage !! NEED UPDATE
 
-### 1. Configure Settings
+### 1. Configure Settings and create .env file
 
 •	Open config.json to set your preferred stock ticker, prediction model, and other parameters.
+•	ALPHA_VANTAGE_API =
+    MODEL_DIR =
+    MODEL_PATH = 
 
 ### 2. Run Predictions
 
 •	Start the application and view predictions in the terminal or a generated report:
 ```bash
-python3 main.py --ticker AAPL --model LSTM
+python3 run.py --ticker AAPL --model LSTM
 ```
 
 ### 3. View Charts
@@ -71,7 +74,7 @@ python3 main.py --ticker AAPL --model LSTM
 •	**Libraries:**
     •	Machine Learning: TensorFlow, Scikit-learn
     •	Data Handling: Pandas, NumPy
-•   	Visualization: Matplotlib, Seaborn, Plotly
+    •   Visualization: Matplotlib, Seaborn
 •	**APIs:**
     •	Alpha Vantage
 

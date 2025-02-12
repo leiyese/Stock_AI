@@ -24,21 +24,21 @@ def split_stock_data(df, split_date, split_ratio) -> pd.DataFrame:
     idx = df.index[df["date"] == split_date][0]
 
     # Separate pre-split and post-split data
-    df_old = df.iloc[:idx].copy()  # Copy to avoid modifying original df
-    df_new = df.iloc[idx:].copy()
+    df_adjusted = df.iloc[:idx].copy()  # Copy to avoid modifying original df
+    df_no_adjusted = df.iloc[idx:].copy()
 
     # Define columns to adjust (excluding 'volume')
     price_columns = ["open", "high", "low", "close"]
 
     # Apply split ratio only to price columns
-    df_old[price_columns] *= split_ratio
+    df_adjusted[price_columns] *= split_ratio
 
     # Adjust volume (inverse of price ratio)
-    df_old["volume"] /= split_ratio
+    df_adjusted["volume"] /= split_ratio
     # change back the dtype of the column to int64 before returning the whole df
-    df["volume"] = df["volume"].astype("int64")
+    df_adjusted["volume"] = df_adjusted["volume"].astype("int64")
 
     # Concatenate adjusted and unadjusted data
-    adjusted_df = pd.concat([df_old, df_new], ignore_index=True)
+    adjusted_df = pd.concat([df_adjusted, df_no_adjusted], ignore_index=True)
 
     return adjusted_df
