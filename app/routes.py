@@ -19,7 +19,11 @@ from app.analysis_models.lstm_model import (
     plot_lstm,
     plot_lstm_whole,
 )
-from app.analysis_models.model_handler import save_lstm_model, load_model
+from app.analysis_models.model_handler import (
+    save_lstm_model,
+    load_model,
+    get_available_models,
+)
 
 # from app.data.data_split
 # from app.data.data_fetcher import get_data_alpha_vantage
@@ -27,6 +31,9 @@ from app.analysis_models.model_handler import save_lstm_model, load_model
 from app.models import Ticker, StockData_daily
 
 # from flask import current_app as app
+
+# Use the loaded MODEL_DIR
+MODEL_DIR = os.getenv("MODEL_DIR", "trained_models")
 
 
 @bp.route("/")
@@ -100,32 +107,56 @@ def train():
 #     pass
 
 
-@bp.route("/analyse")
+@bp.route("/analyse", methods=["POST", "GET"])
 def analyse():
+    tickers = Ticker.query.all()  # Fetch all tickers from the database
+    print(tickers)
+    available_models = get_available_models()
+    if request.method == "POST":
+        # Get user selections
+        selected_model = request.form.get("model")
+        selected_ticker = request.form.get("ticker")
+        start_date = request.form.get("start_date")
+        end_date = request.form.get("end_date")
 
-    # load model
-    loaded_model = load_model("lstm", version=1)
+        # Load model
+        loaded_model = load_model(selected_model)
 
-    df = get_stock_data_from_db("MSFT")
-    start_date = "2020-01-01"
-    end_date = "2023-09-01"
-    windowed_df = df_to_windowed_df(df, start_date, end_date, n=3)
-    dates, X, y = windowed_df_to_date_X_y(windowed_df)
-    (
-        dates_train,
-        X_train,
-        y_train,
-        dates_val,
-        X_val,
-        y_val,
-        dates_test,
-        X_test,
-        y_test,
-    ) = split_data_train_val_test(dates, X, y)
+        # Load data
+        df = get_stock_data_from_db(selected_ticker)
+        selected_start_date = start_date
+        selected_end_date = end_date
+        windowed_df = df_to_windowed_df(df, selected_start_date, selected_end_date, n=3)
+        dates, X, y = windowed_df_to_date_X_y(windowed_df)
+        (
+            dates_train,
+            X_train,
+            y_train,
+            dates_val,
+            X_val,
+            y_val,
+            dates_test,
+            X_test,
+            y_test,
+        ) = split_data_train_val_test(dates, X, y)
 
-    img_base64 = plot_lstm(loaded_model, dates_test, X_test, y_test, "test")
+        img_base64 = plot_lstm(
+            selected_ticker, loaded_model, dates_test, X_test, y_test, "test"
+        )
 
-    return render_template("analyse.html", img_data=img_base64)
+        return render_template(
+            "analyse.html",
+            img_data=img_base64,
+            available_models=available_models,
+            tickers=tickers,
+            selected_model=selected_model,
+            selected_ticker=selected_ticker,
+            start_date=start_date,
+            end_date=end_date,
+        )
+    return render_template(
+        "analyse.html", available_models=available_models, tickers=tickers
+    )
 
 
 @bp.route("/full_plot")

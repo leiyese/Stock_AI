@@ -254,7 +254,7 @@ def plot_lstm_whole(
     return img_base64
 
 
-def plot_lstm(model, dates, X, y, data_type="test"):
+def plot_lstm(ticker, model, dates, X, y, data_type="test"):
     """
     Plots LSTM predictions vs actual values.
 
@@ -283,7 +283,7 @@ def plot_lstm(model, dates, X, y, data_type="test"):
 
     # Title and labels
     ax.set_title(
-        f"LSTM Predictions vs Actual ({data_type.capitalize()} Data)",
+        f"{ticker} LSTM Predictions vs Actual ({data_type.capitalize()} Data)",
         fontsize=14,
         fontweight="bold",
     )

@@ -4,6 +4,8 @@ from app.extensions import db, bp
 from dotenv import load_dotenv
 import os
 
+load_dotenv()
+
 
 def create_app():
     flask_app = Flask(__name__)
@@ -15,7 +17,6 @@ def create_app():
     db.init_app(flask_app)
     from app import routes
 
-    load_dotenv()
     MODEL_DIR = os.getenv("MODEL_DIR", "trained_models")  # Default to trained_models
     flask_app.register_blueprint(bp)
 
