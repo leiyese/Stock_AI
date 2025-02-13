@@ -9,7 +9,7 @@ load_dotenv()
 api_key = os.getenv("ALPHA_VANTAGE_API")
 
 
-def get_data_alpha_vantage(ticker):
+def get_data_alpha_vantage(ticker) -> pd.DataFrame:
     # API endpoint for daily stock prices
     start = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol="
     end = "&outputsize=full&apikey={api_key}"

@@ -28,12 +28,6 @@ def str_to_datetime(s):
     raise ValueError(f"Unexpected date format: {s}")
 
 
-def lstm_datatransformer(df):
-    """
-    Transform df into a the right shape for LSTM
-    """
-
-
 def df_to_windowed_df(df, first_date_str, last_date_str, n=3):
     df["date"] = df["date"].apply(
         str_to_datetime
